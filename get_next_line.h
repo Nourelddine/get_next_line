@@ -17,7 +17,7 @@
 #include <fcntl.h> 
 #include <unistd.h>
 
-# define BUFFER_SIZE 32
+# define BUFFER_SIZE 42
 
 int		get_next_line(const int fd, char **line);
 

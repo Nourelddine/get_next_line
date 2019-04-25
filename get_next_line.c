@@ -1,56 +1,96 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nabdelba <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/24 17:13:38 by nabdelba          #+#    #+#             */
+/*   Updated: 2019/04/24 17:13:38 by nabdelba         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "./get_next_line.h"
 
-void	handle_file(const int fd, t_list **list)
+static int find_char(const char *s,char c)
 {
-	int sz;
-	char buffer[BUFFER_SIZE + 1];
-	t_list *tmp;
-	t_list *save;
-
-	while ((sz = read(fd,buffer,BUFFER_SIZE)) && sz)
-	{
-		buffer[sz] = '\0';
-		tmp = (t_list*)malloc(sizeof(t_list));
-		tmp->content = ft_strdup(buffer);
-		tmp->content_size = sz;
-		ft_lstinsert(&(*list),tmp);
-	}
+	char *p;
+	p = (char *)s;
+	while (*s)
+		if(*s++ == c)
+			return (s - p);
+	return (0);
 }
 
-int		file_size(t_list *list)
-{
-	int	size;
-	size = 0;
-	while (list)
-	{
-		size+= list->content_size;
-		list = list->next;
-	}
-	return (size);
-}
-int count()
-{
-	static int l = -1;
-	l++;
-	return (l);
-}
 int		get_next_line(const int fd, char **line)
 {
-	static t_list	*file;
-	t_list	*p;
-	char	*str;
-	char **words;
-	static int l = 0;
-	handle_file(fd,&file);
-	str = ft_strnew(file_size(file));
-	p = file;
-	while (p)
+	int sz;
+	char buffer[BUFFER_SIZE];
+	static t_list *file;
+	t_list *tmp;
+	tmp = (t_list *)ft_memalloc(sizeof(t_list));
+	tmp->content = ft_strnew(0);
+	ft_lstinsert(&file,tmp);
+	char *p;
+	int i;
+	while ((sz = read(fd, buffer, BUFFER_SIZE)) && sz)
 	{
-		ft_strcat(str,p->content);
-		p = p->next;
+		buffer[sz] = '\0';
+		file->content = ft_strjoin(file->content,buffer);
+		if((i = find_char(buffer,'\n')) && i)
+		{
+			break;	
+		}
 	}
-	words = ft_strsplit(str,'\n');
-	free(str);
-	*line = ft_strdup(words[l++]);
-	return (1);
+	i = find_char(file->content,'\n');
+	p = ft_strsub(file->content,0,i);
+	file->content = ft_strchr(file->content,'\n') + 1;
+	printf("%s",p);
+	return (0);
 }
+
+int main()
+{
+	int fd;
+	fd = open("test.opt",O_RDONLY);
+	char *line;
+	get_next_line(fd,&line);
+	//get_next_line(fd,&line);
+	//get_next_line(fd,&line);
+	//get_next_line(fd,&line);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
