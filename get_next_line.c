@@ -12,91 +12,81 @@
 
 #include "./get_next_line.h"
 
-static int find_char(const char *s,char c)
+int find_char(const char *s, char c)
 {
-	char *p;
-	p = (char *)s;
-	s -= 1;
-	while (*++s)
-		if(*s == c || *s + 1 == c)
-		{
-			return (s - p);
-		}
+	int i;
+
+	i = 0;
+	if (!(s))
+		return (0);
+	while (s[i] != '\0')
+	{
+		if (s[i] == c)
+			return (i);
+		i++;
+	}
 	return (0);
 }
 
-int		get_next_line(const int fd, char **line)
+/*int        find_char(char *s, char c)
+{
+    int     i;
+
+    i = 0;
+    if (s == NULL)
+        return (0);
+    while (s[i])
+    {
+        if (s[i] == c)
+            return (i);
+		i++;
+    }
+    return (0);
+}*/
+
+int get_next_line(const int fd, char **line)
 {
 	int sz;
-	char buffer[BUFFER_SIZE + 1];
+	char buffer[BUFF_SIZE + 1];
 	static t_list *file;
 	t_list *tmp;
-	char *p;
 	int i;
 
-	if(read(fd,buffer,0) < 0 || fd < 0)
+	if ((read(fd, buffer, 0) < 0 || fd < 0 || !line))
+	{
 		return (-1);
+	}
 	tmp = (t_list *)ft_memalloc(sizeof(t_list));
 	tmp->content = ft_strnew(0);
-	ft_lstinsert(&file,tmp);
-	while ((sz = read(fd, buffer, BUFFER_SIZE)) && sz)
+	ft_lstinsert(&file, tmp);
+	while ((sz = read(fd, buffer, BUFF_SIZE)) && sz)
 	{
-		buffer[sz + 1] = '\0';
-		file->content = ft_strjoin(file->content,buffer);
-		if((find_char(buffer,'\n')))
+		buffer[sz] = '\0';
+		if (!(file->content = ft_strjoin(file->content, buffer)))
+		{
+			return (-1);
+		}
+		if ((ft_strchr(buffer, '\n')))
+		{
 			break;
+		}
 	}
-	i = find_char(file->content,'\n');
-	p = ft_strsub(file->content,0,i);
-	file->content = ft_strchr(file->content,'\n') + 1;
-	*line = p;
+	if (sz == 0 && !ft_strlen((char *)file->content))
+		return (0);
+	i = find_char(file->content, '\n');
+	*line = ft_strsub(file->content, 0, i);
+	file->content = ft_strchr(file->content, '\n') + 1;
 	return (1);
 }
 
-int main()
-{
-	int fd;
-	fd = 1;
-	char *line;
-	write(fd,"abcdefgh\n",9);
-	write(fd,"ikjlmnop\n",9);
-	write(fd,"qrstuvwx\n",9);
-	write(fd,"yzabcdda\n",9);
-	write(fd,"qwerty12\n",9);
-	close(fd);
-	get_next_line(fd,&line);
-	printf("%s",line);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// int main()
+// {
+// 	int fd;
+// 	char *line;
+// 	fd = open("cmp.txt",O_RDONLY);
+// 	while (get_next_line(fd,&line))
+// 	{
+// 		printf("%s",line);
+// 		free(line);
+// 	}
+// }
