@@ -6,7 +6,7 @@
 /*   By: nabdelba <nabdelba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 00:58:45 by nabdelba          #+#    #+#             */
-/*   Updated: 2019/04/28 01:09:41 by nabdelba         ###   ########.fr       */
+/*   Updated: 2019/04/29 01:11:10 by nabdelba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,12 @@ int		find_char(const char *s, char c)
 {
 	int i;
 
-	i = 0;
-	if (!(s))
+	i = -1;
+	if (!s)
 		return (0);
-	while (s[i] != '\0')
-	{
+	while (s[++i] != '\0')
 		if (s[i] == c)
 			return (i);
-		i++;
-	}
 	return (0);
 }
 
@@ -48,6 +45,20 @@ int		read_file(t_list **file, int fd, char **line)
 	return (1);
 }
 
+t_list *handle_fd(t_list *file, int fd)
+{
+	t_list *save;
+
+	save = file;
+	while (save)
+	{
+		if (save->content_size == fd)
+			return (save);
+		save = save->next;
+	}
+	return (NULL);
+}
+
 int		get_next_line(const int fd, char **line)
 {
 	int				i;
@@ -56,7 +67,9 @@ int		get_next_line(const int fd, char **line)
 
 	tmp = (t_list *)ft_memalloc(sizeof(t_list));
 	tmp->content = ft_strnew(0);
+	tmp->content_size = fd;
 	ft_lstinsert(&file, tmp);
+	file = handle_fd(file,fd);
 	i = read_file(&file, fd, line);
 	if (i != 1)
 		return (i);
