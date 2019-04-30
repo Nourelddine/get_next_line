@@ -6,7 +6,7 @@
 /*   By: nabdelba <nabdelba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 01:10:39 by nabdelba          #+#    #+#             */
-/*   Updated: 2019/04/28 01:11:43 by nabdelba         ###   ########.fr       */
+/*   Updated: 2019/04/30 01:08:41 by nabdelba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@
 # include "./libft/libft.h"
 # include <fcntl.h>
 # include <unistd.h>
+# define BUFF_SIZE 32
 
-# define BUFF_SIZE 42
+# define RETURN_IF(x, ret) if (x) return (ret);
 
 int		get_next_line(const int fd, char **line);
 

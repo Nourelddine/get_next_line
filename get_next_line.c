@@ -6,82 +6,63 @@
 /*   By: nabdelba <nabdelba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 00:58:45 by nabdelba          #+#    #+#             */
-/*   Updated: 2019/04/29 01:11:10 by nabdelba         ###   ########.fr       */
+/*   Updated: 2019/04/30 01:09:59 by nabdelba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./get_next_line.h"
 
-int		find_char(const char *s, char c)
+static int		find_char(const char *s, char c)
 {
 	int i;
 
-	i = -1;
-	if (!s)
-		return (0);
-	while (s[++i] != '\0')
-		if (s[i] == c)
-			return (i);
-	return (0);
+	i = 0;
+	while (s[i] != '\0' && s[i] != c)
+		i++;
+	return ((s[i] == c) ? i : 0);
 }
 
-int		read_file(t_list **file, int fd, char **line)
+static t_list	*handle_file(t_list **file, int fd)
 {
-	char	buffer[BUFF_SIZE + 1];
-	int		sz;
+	t_list *p;
 
-	if ((read(fd, buffer, 0) < 0 || fd < 0 || !line))
-		return (-1);
+	p = *file;
+	while (p)
+	{
+		if ((int)p->content_size == fd)
+			return (p);
+		p = p->next;
+	}
+	p = ft_lstnew("\0", fd);
+	ft_lstadd(file, p);
+	p = *file;
+	return (p);
+}
+
+int				get_next_line(const int fd, char **line)
+{
+	static t_list	*file;
+	char			buffer[BUFF_SIZE + 1];
+	int				sz;
+	t_list			*node;
+
+	RETURN_IF((read(fd, NULL, 0) < 0 || fd < 0 || !line), -1);
+	node = handle_file(&file, fd);
 	while ((sz = read(fd, buffer, BUFF_SIZE)) && sz)
 	{
 		buffer[sz] = '\0';
-		if (!((*file)->content = ft_strjoin((*file)->content, buffer)))
-			return (-1);
-		if ((ft_strchr(buffer, '\n')))
+		node->content = ft_strjoin(node->content, buffer);
+		if ((ft_strchr(node->content, '\n')))
 			break ;
 	}
-	if (sz == 0 && !ft_strlen((char *)(*file)->content))
-		return (0);
-	return (1);
-}
-
-t_list *handle_fd(t_list *file, int fd)
-{
-	t_list *save;
-
-	save = file;
-	while (save)
+	RETURN_IF((sz == 0 && !ft_strlen((char *)node->content)), 0);
+	if (!ft_strchr(node->content, '\n'))
 	{
-		if (save->content_size == fd)
-			return (save);
-		save = save->next;
-	}
-	return (NULL);
-}
-
-int		get_next_line(const int fd, char **line)
-{
-	int				i;
-	static t_list	*file;
-	t_list			*tmp;
-
-	tmp = (t_list *)ft_memalloc(sizeof(t_list));
-	tmp->content = ft_strnew(0);
-	tmp->content_size = fd;
-	ft_lstinsert(&file, tmp);
-	file = handle_fd(file,fd);
-	i = read_file(&file, fd, line);
-	if (i != 1)
-		return (i);
-	i = 0;
-	if (!ft_strchr(file->content, '\n'))
-	{
-		*line = ft_strdup(file->content);
+		*line = ft_strdup(node->content);
 		ft_strclr(file->content);
 		return (1);
 	}
-	i = find_char(file->content, '\n');
-	*line = ft_strsub(file->content, 0, i);
-	file->content = ft_strchr(file->content, '\n') + 1;
+	*line = ft_strsub(node->content, 0, find_char(node->content, '\n'));
+	node->content = ft_strchr(node->content, '\n') + 1;
 	return (1);
 }
