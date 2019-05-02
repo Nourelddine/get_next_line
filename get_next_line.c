@@ -6,7 +6,7 @@
 /*   By: nabdelba <nabdelba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 00:58:45 by nabdelba          #+#    #+#             */
-/*   Updated: 2019/05/02 22:56:21 by nabdelba         ###   ########.fr       */
+/*   Updated: 2019/05/02 23:23:59 by nabdelba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static void		read_file(t_list **node, int fd, int *sz, char **tmp)
 		buffer[*sz] = '\0';
 		*tmp = ft_strnew(ft_strlen((char *)(*node)->content));
 		ft_strcpy(*tmp, (*node)->content);
+		free((*node)->content);
 		(*node)->content = ft_strjoin(*tmp, buffer);
 		free(*tmp);
 		if ((ft_strchr((*node)->content, '\n')))
