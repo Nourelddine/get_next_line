@@ -6,7 +6,7 @@
 /*   By: nabdelba <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/13 19:08:04 by nabdelba          #+#    #+#             */
-/*   Updated: 2019/04/22 23:00:11 by nabdelba         ###   ########.fr       */
+/*   Updated: 2019/04/30 03:51:35 by nabdelba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ int					ft_is_space(char c);
 int					ft_cwords(char *s, char del);
 int					ft_atoi(const char *nptr);
 int					ft_iswhite(const char s);
+int					ft_findchr(const char *s, char c);
 int					ft_strequ(char const *s1, char const *s2);
 int					ft_strnequ(char const *s1, char const *s2, size_t n);
 int					ft_intlen(int c);
