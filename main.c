@@ -1,24 +1,19 @@
 #include "./get_next_line.h"
 
-
 int main()
 {
 	int fd;
-	int fd1;
 	char *line;
-	fd = open("test.opt",O_RDONLY);
-	fd1 = open("test.opt1",O_RDONLY);
-	get_next_line(fd,&line);
-	printf("%s\n",line);
-	free(line);
-	get_next_line(fd,&line);
-	printf("%s\n",line);
-	free(line);
-	/****************/
-	get_next_line(fd1,&line);
-	printf("%s\n",line);
-	free(line);
-	get_next_line(fd1,&line);
-	printf("%s\n",line);
-	free(line);
+	fd = open("test.opt", O_RDONLY);
+	int res;
+	while ((res = get_next_line(fd, &line)) > 0)
+	{
+		printf("[%d]\n", res);
+		printf("[%s]\n", line);
+		ft_strdel(&line);
+	}
+	printf("[%d]\n", res);
+	printf("[%s]\n", line);
+	ft_strdel(&line);
+	return (0);
 }
